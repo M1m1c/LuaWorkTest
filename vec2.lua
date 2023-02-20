@@ -1,4 +1,4 @@
-Vec2 = {}
+local Vec2 = {}
 Vec2.__index = Vec2
 
 function Vec2.new(x, y)
@@ -6,7 +6,7 @@ function Vec2.new(x, y)
     self.x = x or 0
     self.y = y or 0
     return self
-  end
+end
 
 function Vec2.Add(a, b)
     if type(a) == "number" then
