@@ -1,6 +1,10 @@
 Vec2 = require("vec2")
 Player = require("player")
 GravityConstant = 100.0
+MaxJumpTimer= 0.4
+JumpTimer =0.0
+MaxJumpButtonHoldTimer =0.15
+JumpButtonHoldTimer =0.0
 
 
 windowSize = Vec2.new(800.0, 600.0)
@@ -12,23 +16,45 @@ function love.load()
 end
 
 function love.update(dt)
-    ApplyGravity(dt)
+    --ExtendJumpWithHeldButton(dt)
+    JumpingAndFalling(dt)
+end
+
+function ExtendJumpWithHeldButton(dt)
+    if Player.Input.Jump==true then
+        return
+    end
+    --TODO find clamp function
+	JumpButtonHoldTimer = love.math.clamp(JumpButtonHoldTimer + (dt * 0.7), 0.0, MaxJumpButtonHoldTimer)
+	JumpTimer =JumpTimer +( (dt + JumpButtonHoldTimer) * 0.2);
 end
 
 --TODO need to take in a table of entites
-function ApplyGravity(dt)
+function JumpingAndFalling(dt)
     local gravComp = Player.GravityComp
-    gravComp.FallMomentum = gravComp.FallMomentum + (dt * gravComp.Weight)
+   
+    
+    if JumpTimer > 0.0 then
+        local multi= JumpTimer*4
+        local pow =multi*multi
+        local jumpMagnitude = -GravityConstant * dt * pow;
 
-    local gravityStep = GravityConstant * gravComp.FallMomentum * dt
-    local nextStep = Player.Position.y + gravityStep
+        Player.Position.y = Player.Position.y + (jumpMagnitude)
 
+        JumpTimer = JumpTimer - dt --clamp this between 0 and max
+    elseif Player.Position.y < windowSize.y - Player.Size.y then
 
-    if nextStep < windowSize.y - Player.Size.y then
+        gravComp.FallMomentum = gravComp.FallMomentum + (dt * gravComp.Weight)
+
+        local gravityStep = GravityConstant * gravComp.FallMomentum * dt
+        local nextStep = Player.Position.y + gravityStep
+
         Player.Position.y = nextStep
+
     else
         Player.Position.y = windowSize.y - Player.Size.y
         gravComp.FallMomentum = 0
+        gravComp.IsGrounded=true
     end
 
     Player.GravityComp = gravComp
@@ -37,6 +63,8 @@ end
 function love.keypressed(key)
     if key == "space" then
         Player.Input.Jump = true
+        JumpTimer=MaxJumpTimer;
+        Player.GravityComp.FallMomentum=0
     end
     if key == "d" or key == "right" then
         Player.Input.Right = true
