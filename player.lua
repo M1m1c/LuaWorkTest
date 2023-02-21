@@ -11,9 +11,9 @@ local player = {
 
 function player.Update(dt)
     ReadInput()
-    player.MoveComp.ExtendJumpWithHeldButton(player.Input.Jump.Current, dt)
-    player.MoveComp.JumpingAndFalling(player.Position.y, player.Size.y, dt)
-    player.MoveComp.MoveInDirection(dt)
+    moveComp.ExtendJumpWithHeldButton(inputComp.Jump.Current, dt)
+    moveComp.JumpingAndFalling(player.Position.y, player.Size.y, dt)
+    moveComp.MoveInDirection(dt)
     ApplyMovement()
 end
 
@@ -24,7 +24,7 @@ function ReadInput()
     if input.Jump.Current == true and input.Jump.Old == false then
         input.Jump.Old = true
 
-        player.MoveComp.InitiateJump()
+        moveComp.InitiateJump()
     elseif input.Jump.Current == false and input.Jump.Old == true then
         input.Jump.Old = false
     end
@@ -33,15 +33,13 @@ function ReadInput()
         moveComp.Direction = 1
     elseif input.Left.Current == true then
         moveComp.Direction = -1
-    else
-        moveComp.Direction = 0
     end
 end
 
 function ApplyMovement()
-    local nextStep = vec2.new(player.Position.x + moveComp.Velocity.x, player.Position.y + moveComp.Velocity.y)
+    local nextStep = vec2.new(player.Position.x + moveComp.MoveVelocity.x, player.Position.y + moveComp.MoveVelocity.y)
     if nextStep.y >= WindowSize.y - player.Size.y then
-        player.MoveComp.BecomeGrounded()
+        moveComp.BecomeGrounded()
         nextStep.y = WindowSize.y - player.Size.y
     end
     player.Position = nextStep
