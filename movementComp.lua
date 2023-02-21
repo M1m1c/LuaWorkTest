@@ -36,11 +36,11 @@ function moveComp.JumpingAndFalling(positionY, sizeY, dt)
         jumpForce = jumpMagnitude
 
         jComp.JumpTimer = lMath.clamp(jComp.JumpTimer - dt, 0.0, jComp.MaxJumpTimer) --clamp this between 0 and max
+
     elseif gravComp.IsGrounded == false then
+
         gravComp.FallMomentum = gravComp.FallMomentum + (dt * gravComp.Weight)
-
         local gravityStep = gravComp.Gravity * gravComp.FallMomentum * dt
-
         gravForce = gravityStep
     else
         gravForce = 0.0
