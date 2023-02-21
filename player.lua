@@ -9,38 +9,33 @@ local player = {
     MoveComp = moveComp
 }
 
-
 function player.Update(dt)
     ReadInput()
     player.MoveComp.ExtendJumpWithHeldButton(player.Input.Jump.Current, dt)
     player.MoveComp.JumpingAndFalling(player.Position.y, player.Size.y, dt)
+    player.MoveComp.MoveInDirection(dt)
     ApplyMovement()
 end
 
 --TODO breakout funcitonality where we can pass a inputatom and two collections of funcitons, one to call when button is pressed and one when button is released
 function ReadInput()
-    if player.Input.Jump.Current == true and player.Input.Jump.Old == false then
-        player.Input.Jump.Old = true
+    local input = player.Input
+
+    if input.Jump.Current == true and input.Jump.Old == false then
+        input.Jump.Old = true
 
         player.MoveComp.InitiateJump()
-    elseif player.Input.Jump.Current == false and player.Input.Jump.Old == true then
-        player.Input.Jump.Old = false
+    elseif input.Jump.Current == false and input.Jump.Old == true then
+        input.Jump.Old = false
     end
 
-    if player.Input.Left.Current == true and player.Input.Left.Old == false then
-        player.Input.Left.Old = true
-
-    elseif player.Input.Left.Current == false and player.Input.Left.Old == true then
-        player.Input.Left.Old = false
+    if input.Right.Current == true then
+        moveComp.Direction = 1
+    elseif input.Left.Current == true then
+        moveComp.Direction = -1
+    else
+        moveComp.Direction = 0
     end
-
-    if player.Input.Right.Current == true and player.Input.Right.Old == false then
-        player.Input.Right.Old = true
-
-    elseif player.Input.Right.Current == false and player.Input.Right.Old == true then
-        player.Input.Right.Old = false
-    end
-
 end
 
 function ApplyMovement()

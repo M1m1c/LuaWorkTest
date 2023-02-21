@@ -5,6 +5,7 @@ local jumpComp = require("jumpComp")
 
 local moveComp = {
     Velocity = vec2.new(0.0, 0.0),
+    Direction = 0,
     GravityComp = gravityComp,
     JumpComp = jumpComp
 }
@@ -12,6 +13,13 @@ local moveComp = {
 local jumpForce = 0.0
 local gravForce = 0.0
 
+--HORIZONTAL MOVEMENT
+function moveComp.MoveInDirection(dt)
+    local step = 100.0 * dt * moveComp.Direction
+    moveComp.Velocity.x=step
+end
+
+--JUMPING
 function moveComp.ExtendJumpWithHeldButton(jumpInput, dt)
     local jComp = moveComp.JumpComp
     if jumpInput == false then
