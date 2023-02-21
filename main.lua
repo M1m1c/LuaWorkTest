@@ -1,10 +1,11 @@
 Vec2 = require("vec2")
 Player = require("player")
+Lmath = require("lmath")
 GravityConstant = 100.0
-MaxJumpTimer= 0.4
-JumpTimer =0.0
-MaxJumpButtonHoldTimer =0.15
-JumpButtonHoldTimer =0.0
+MaxJumpTimer = 0.4
+JumpTimer = 0.0
+MaxJumpButtonHoldTimer = 0.15
+JumpButtonHoldTimer = 0.0
 
 
 windowSize = Vec2.new(800.0, 600.0)
@@ -16,78 +17,41 @@ function love.load()
 end
 
 function love.update(dt)
-    --ExtendJumpWithHeldButton(dt)
-    JumpingAndFalling(dt)
+    Player.Update(dt)
 end
 
-function ExtendJumpWithHeldButton(dt)
-    if Player.Input.Jump==true then
-        return
-    end
-    --TODO find clamp function
-	JumpButtonHoldTimer = love.math.clamp(JumpButtonHoldTimer + (dt * 0.7), 0.0, MaxJumpButtonHoldTimer)
-	JumpTimer =JumpTimer +( (dt + JumpButtonHoldTimer) * 0.2);
-end
-
---TODO need to take in a table of entites
-function JumpingAndFalling(dt)
-    local gravComp = Player.GravityComp
-   
-    
-    if JumpTimer > 0.0 then
-        local multi= JumpTimer*4
-        local pow =multi*multi
-        local jumpMagnitude = -GravityConstant * dt * pow;
-
-        Player.Position.y = Player.Position.y + (jumpMagnitude)
-
-        JumpTimer = JumpTimer - dt --clamp this between 0 and max
-    elseif Player.Position.y < windowSize.y - Player.Size.y then
-
-        gravComp.FallMomentum = gravComp.FallMomentum + (dt * gravComp.Weight)
-
-        local gravityStep = GravityConstant * gravComp.FallMomentum * dt
-        local nextStep = Player.Position.y + gravityStep
-
-        Player.Position.y = nextStep
-
-    else
-        Player.Position.y = windowSize.y - Player.Size.y
-        gravComp.FallMomentum = 0
-        gravComp.IsGrounded=true
-    end
-
-    Player.GravityComp = gravComp
-end
 
 function love.keypressed(key)
     if key == "space" then
-        Player.Input.Jump = true
-        JumpTimer=MaxJumpTimer;
-        Player.GravityComp.FallMomentum=0
+        Player.Input.Jump.Current = true
     end
     if key == "d" or key == "right" then
-        Player.Input.Right = true
+        Player.Input.Right.Current = true
     end
     if key == "a" or key == "left" then
-        Player.Input.Left = true
+        Player.Input.Left.Current = true
     end
 end
 
 function love.keyreleased(key)
     if key == "space" then
-        Player.Input.Jump = false
+        Player.Input.Jump.Current = false
     end
     if key == "d" or key == "right" then
-        Player.Input.Right = false
+        Player.Input.Right.Current = false
     end
     if key == "a" or key == "left" then
-        Player.Input.Left = false
+        Player.Input.Left.Current = false
     end
 end
 
 function love.draw()
     love.graphics.rectangle("fill", Player.Position.x, Player.Position.y, Player.Size.x, Player.Size.y)
     love.graphics.print("player position Y:" .. Player.Position.y, 0, 10)
-    love.graphics.print("FallMomentum:" .. Player.GravityComp.FallMomentum, 0, 20)
+    if Player.Input.Jump.Current==true then
+        love.graphics.print("Jump:" .. "true", 0, 20)
+        else
+            love.graphics.print("Jump:" .. "false", 0, 20)
+    end
+   
 end
