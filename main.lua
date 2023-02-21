@@ -1,6 +1,6 @@
-Vec2 = require("vec2")
-Player = require("player")
-Lmath = require("lmath")
+local Vec2 = require("vec2")
+local Player = require("player")
+local Lmath = require("lmath")
 GravityConstant = 100.0
 MaxJumpTimer = 0.4
 JumpTimer = 0.0
@@ -8,12 +8,12 @@ MaxJumpButtonHoldTimer = 0.15
 JumpButtonHoldTimer = 0.0
 
 
-windowSize = Vec2.new(800.0, 600.0)
+WindowSize = Vec2.new(800.0, 600.0)
 
 function love.load()
     Player.Position = Vec2.new(390, 0)
     Player.Size = Vec2.new(10, 10)
-    Player.GravityComp.Weight = 3.5
+    Player.MoveComp.GravityComp.Weight = 5.5
 end
 
 function love.update(dt)
