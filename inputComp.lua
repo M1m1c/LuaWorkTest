@@ -1,2 +1,3 @@
-local inputComp = { Jump = false, Right = false, Left = false }
+local inputAtom={Current=false,Old=false}
+local inputComp = { Jump = inputAtom, Right = inputAtom, Left = inputAtom }
 return inputComp
