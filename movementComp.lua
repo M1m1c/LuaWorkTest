@@ -4,7 +4,7 @@ local gravityComp = require("gravityComp")
 local jumpComp = require("jumpComp")
 
 local moveComp = {
-    Velocity = vec2.new(0.0, 0.0),
+    MoveVelocity = vec2.new(0.0, 0.0),
     Direction = 0,
     GravityComp = gravityComp,
     JumpComp = jumpComp
@@ -16,7 +16,7 @@ local gravForce = 0.0
 --HORIZONTAL MOVEMENT
 function moveComp.MoveInDirection(dt)
     local step = 100.0 * dt * moveComp.Direction
-    moveComp.Velocity.x=step
+    moveComp.MoveVelocity.x=step
 end
 
 --JUMPING
@@ -53,7 +53,7 @@ function moveComp.JumpingAndFalling(positionY, sizeY, dt)
         jumpForce = 0.0
     end
 
-    moveComp.Velocity.y = jumpForce + gravForce
+    moveComp.MoveVelocity.y = jumpForce + gravForce
     moveComp.GravityComp = gravComp
     moveComp.JumpComp = jComp
 end
@@ -68,7 +68,7 @@ function moveComp.InitiateJump()
 end
 
 function moveComp.BecomeGrounded()
-    moveComp.Velocity.y = 0
+    moveComp.MoveVelocity.y = 0
     moveComp.JumpComp.JumpTimer = 0
     moveComp.GravityComp.FallMomentum = 0
     moveComp.GravityComp.IsGrounded = true
