@@ -1,11 +1,6 @@
 local Vec2 = require("vec2")
 local Player = require("player")
 local Lmath = require("lmath")
-GravityConstant = 100.0
-MaxJumpTimer = 0.4
-JumpTimer = 0.0
-MaxJumpButtonHoldTimer = 0.15
-JumpButtonHoldTimer = 0.0
 
 
 WindowSize = Vec2.new(800.0, 600.0)

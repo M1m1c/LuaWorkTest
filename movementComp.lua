@@ -53,7 +53,7 @@ function moveComp.JumpingAndFalling(positionY, sizeY, dt)
 end
 
 function moveComp.InitiateJump()
-    moveComp.JumpComp.JumpTimer = MaxJumpTimer
+    moveComp.JumpComp.JumpTimer = moveComp.JumpComp.MaxJumpTimer
     moveComp.JumpComp.JumpButtonHoldTimer = 0.0
     moveComp.GravityComp.FallMomentum = 0
     moveComp.GravityComp.IsGrounded = false
