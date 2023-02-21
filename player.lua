@@ -30,9 +30,15 @@ function ReadInput()
     end
 
     if input.Right.Current == true then
-        moveComp.Direction = 1
+        moveComp.DirectionComp.Dir = 1
     elseif input.Left.Current == true then
-        moveComp.Direction = -1
+        moveComp.DirectionComp.Dir = -1
+    end
+
+    if input.Right.Current == false and input.Left.Current == false then
+        moveComp.DirectionComp.IsRecivingInput = false
+    else
+        moveComp.DirectionComp.IsRecivingInput = true
     end
 end
 

@@ -2,10 +2,11 @@ local vec2 = require("vec2")
 local lMath = require("lmath")
 local gravityComp = require("gravityComp")
 local jumpComp = require("jumpComp")
+local directionComp = require("directionComp")
 
 local moveComp = {
     MoveVelocity = vec2.new(0.0, 0.0),
-    Direction = 0,
+    DirectionComp = directionComp,
     GravityComp = gravityComp,
     JumpComp = jumpComp
 }
@@ -15,8 +16,25 @@ local gravForce = 0.0
 
 --HORIZONTAL MOVEMENT
 function moveComp.MoveInDirection(dt)
-    local step = 100.0 * dt * moveComp.Direction
-    moveComp.MoveVelocity.x=step
+    if directionComp.IsRecivingInput == false then
+        local decelSpeed = 0
+        if gravityComp.IsGrounded == true then
+            decelSpeed = directionComp.DecelerationSpeed
+        else
+            decelSpeed = directionComp.DecelerationSpeed * 0.25
+        end
+
+        local reductionForce = (directionComp.Dir * -1) * decelSpeed * dt
+        local resultForce = reductionForce + moveComp.MoveVelocity.x
+
+        --TODO dot
+        --FVector::DotProduct(resultForce.GetSafeNormal(), mainForce.GetSafeNormal()) < 0.f
+        --if true then set move velocity x to 0 otherwise reduce it by reduction force
+        moveComp.MoveVelocity.x=moveComp.MoveVelocity.x +reductionForce
+    else
+        local step = 100.0 * dt * moveComp.DirectionComp.Dir
+        moveComp.MoveVelocity.x = step
+    end
 end
 
 --JUMPING
