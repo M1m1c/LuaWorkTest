@@ -20,9 +20,11 @@ function love.keypressed(key)
     if key == "space" then
         Player.Input.Jump.Current = true
     end
+    
     if key == "d" or key == "right" then
         Player.Input.Right.Current = true
     end
+
     if key == "a" or key == "left" then
         Player.Input.Left.Current = true
     end
@@ -32,9 +34,11 @@ function love.keyreleased(key)
     if key == "space" then
         Player.Input.Jump.Current = false
     end
+
     if key == "d" or key == "right" then
         Player.Input.Right.Current = false
     end
+
     if key == "a" or key == "left" then
         Player.Input.Left.Current = false
     end
