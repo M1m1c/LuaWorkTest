@@ -13,6 +13,7 @@ local moveComp = {
 
 local jumpForce = 0.0
 local gravForce = 0.0
+local moveForce = 0.0
 
 --HORIZONTAL MOVEMENT
 function moveComp.MoveInDirection(dt)
@@ -27,17 +28,35 @@ function moveComp.MoveInDirection(dt)
         local reductionForce = (directionComp.Dir * -1) * decelSpeed * dt
         local resultForce = reductionForce + moveComp.MoveVelocity.x
 
-        local isPositiveDir = directionComp.Dir>0
-        local isNewvelocityLess=moveComp.MoveVelocity.x+resultForce<0.0
+        local isPositiveDir = directionComp.Dir > 0
+        local isNewvelocityLess = moveComp.MoveVelocity.x + resultForce < 0.0
 
-        if (isPositiveDir and isNewvelocityLess) or(not isPositiveDir and  not isNewvelocityLess) then
-            moveComp.MoveVelocity.x=0.0
-        else 
-            moveComp.MoveVelocity.x=moveComp.MoveVelocity.x +reductionForce
+        if (isPositiveDir and isNewvelocityLess) or (not isPositiveDir and not isNewvelocityLess) then
+            moveComp.MoveVelocity.x = 0.0
+        else
+            moveComp.MoveVelocity.x = moveComp.MoveVelocity.x + reductionForce
         end
     else
-        local step = 100.0 * dt * moveComp.DirectionComp.Dir
-        moveComp.MoveVelocity.x = step
+        --TODO implememt gradual increase of speed
+        local newStep = 0.0
+        if directionComp.IsRecivingInput then
+            newStep = dt * directionComp.Dir * directionComp.AccelerationSpeed
+        end
+        
+        local absInput = lMath.clamp( directionComp.Dir ^ 2, 0.0, 1.0)
+        if moveForce+newStep<absInput then
+            moveForce = moveForce + newStep
+        end
+
+
+        if newStep ^ 2 > 0.0 then
+            moveForce = newStep * (math.sqrt(moveForce^2))
+        end
+
+
+       -- moveForce = lMath.clamp(moveForce, -1.0, 1.0)
+
+        moveComp.MoveVelocity.x = moveComp.MoveVelocity.x + (moveForce * directionComp.MoveSpeed)
     end
 end
 
