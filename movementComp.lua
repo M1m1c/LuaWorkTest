@@ -47,45 +47,41 @@ function moveComp.MoveInDirection(dt)
 
         local isRightDir = directionComp.Dir > 0
         local isVelocityLeft = moveForce < 0.0
-        if (isRightDir and isVelocityLeft) or (not isRightDir and not isVelocityLeft)then
-            moveForce = moveForce *-1
+        if (isRightDir and isVelocityLeft) or (not isRightDir and not isVelocityLeft) then
+            moveForce = moveForce * -1
         end
-
-
     end
-    moveForce=lMath.clamp(moveForce,-1.0,1.0)
+    moveForce = lMath.clamp(moveForce, -1.0, 1.0)
     moveComp.MoveForce = moveForce
     moveComp.MoveVelocity.x = moveForce * directionComp.MaxMoveSpeed
 end
 
 --JUMPING
 function moveComp.ExtendJumpWithHeldButton(jumpInput, dt)
-    local jComp = moveComp.JumpComp
+   
     if jumpInput == false then
         return
-    elseif jComp.JumpButtonHoldTimer >= jComp.MaxJumpButtonHoldTimer then
+    elseif jumpComp.JumpButtonHoldTimer >= jumpComp.MaxJumpButtonHoldTimer then
         return
     else
-        local temp = jComp.JumpButtonHoldTimer + (dt * 0.7)
-        jComp.JumpButtonHoldTimer = lMath.clamp(temp, 0.0, jComp.MaxJumpButtonHoldTimer)
-        jComp.JumpTimer = jComp.JumpTimer + ((dt + jComp.JumpButtonHoldTimer) * 0.2);
-        moveComp.JumpComp = jComp
+        local temp = jumpComp.JumpButtonHoldTimer + (dt * 0.7)
+        jumpComp.JumpButtonHoldTimer = lMath.clamp(temp, 0.0, jumpComp.MaxJumpButtonHoldTimer)
+        jumpComp.JumpTimer = jumpComp.JumpTimer + ((dt + jumpComp.JumpButtonHoldTimer) * 0.2);
+        moveComp.JumpComp = jumpComp
     end
 end
 
 function moveComp.JumpingAndFalling(positionY, sizeY, dt)
-    local gravComp = moveComp.GravityComp
-    local jComp = moveComp.JumpComp
 
-    if jComp.JumpTimer > 0.0 then
-        local jumpMagnitude = -gravComp.Gravity * dt * ((jComp.JumpTimer * 4) ^ 2);
+    if jumpComp.JumpTimer > 0.0 then
+        local jumpMagnitude = -gravityComp.Gravity * dt * ((jumpComp.JumpTimer * 4) ^ 2);
 
         jumpForce = jumpMagnitude
 
-        jComp.JumpTimer = lMath.clamp(jComp.JumpTimer - dt, 0.0, jComp.MaxJumpTimer) --clamp this between 0 and max
-    elseif gravComp.IsGrounded == false then
-        gravComp.FallMomentum = gravComp.FallMomentum + (dt * gravComp.Weight)
-        local gravityStep = gravComp.Gravity * gravComp.FallMomentum * dt
+        jumpComp.JumpTimer = lMath.clamp(jumpComp.JumpTimer - dt, 0.0, jumpComp.MaxJumpTimer) --clamp this between 0 and max
+    elseif gravityComp.IsGrounded == false then
+        gravityComp.FallMomentum = gravityComp.FallMomentum + (dt * gravityComp.Weight)
+        local gravityStep = gravityComp.Gravity * gravityComp.FallMomentum * dt
         gravForce = gravityStep
     else
         gravForce = 0.0
@@ -93,24 +89,28 @@ function moveComp.JumpingAndFalling(positionY, sizeY, dt)
     end
 
     moveComp.MoveVelocity.y = jumpForce + gravForce
-    moveComp.GravityComp = gravComp
-    moveComp.JumpComp = jComp
+    moveComp.GravityComp = gravityComp
 end
 
 function moveComp.InitiateJump()
-    moveComp.JumpComp.JumpTimer = moveComp.JumpComp.MaxJumpTimer
-    moveComp.JumpComp.JumpButtonHoldTimer = 0.0
-    moveComp.GravityComp.FallMomentum = 0
-    moveComp.GravityComp.IsGrounded = false
+    if jumpComp.CurrentJumps == jumpComp.MaxJumps then
+        return
+    end
+    jumpComp.JumpTimer = jumpComp.MaxJumpTimer
+    jumpComp.JumpButtonHoldTimer = 0.0
+    jumpComp.CurrentJumps = jumpComp.CurrentJumps + 1
+    gravityComp.FallMomentum = 0
+    gravityComp.IsGrounded = false
     gravForce = 0.0
     jumpForce = 0.0
 end
 
 function moveComp.BecomeGrounded()
     moveComp.MoveVelocity.y = 0
-    moveComp.JumpComp.JumpTimer = 0
-    moveComp.GravityComp.FallMomentum = 0
-    moveComp.GravityComp.IsGrounded = true
+    jumpComp.JumpTimer = 0
+    jumpComp.CurrentJumps = 0
+    gravityComp.FallMomentum = 0
+    gravityComp.IsGrounded = true
 end
 
 return moveComp
