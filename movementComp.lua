@@ -55,7 +55,7 @@ function moveComp.MoveInDirection(dt)
     end
     moveForce=lMath.clamp(moveForce,-1.0,1.0)
     moveComp.MoveForce = moveForce
-    moveComp.MoveVelocity.x = moveForce * directionComp.MoveSpeed
+    moveComp.MoveVelocity.x = moveForce * directionComp.MaxMoveSpeed
 end
 
 --JUMPING
