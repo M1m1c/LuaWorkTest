@@ -51,6 +51,12 @@ function ApplyMovement()
         moveComp.BecomeGrounded()
         nextStep.y = WindowSize.y - player.Size.y
     end
+
+    if nextStep.x >= WindowSize.x - player.Size.x then
+        nextStep.x = WindowSize.x - player.Size.x
+    elseif nextStep.x <= 0 then
+        nextStep.x = 0
+    end
     player.Position = nextStep
 end
 
