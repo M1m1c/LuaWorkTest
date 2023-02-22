@@ -45,6 +45,7 @@ function love.keyreleased(key)
 end
 
 function love.draw()
+    love.graphics.setColor(0,200,240)
     love.graphics.rectangle("fill", Player.Position.x, Player.Position.y, Player.Size.x, Player.Size.y)
     love.graphics.print("player position Y:" .. Player.Position.y, 0, 10)
     if Player.Input.Jump.Current==true then
