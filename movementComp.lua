@@ -27,10 +27,14 @@ function moveComp.MoveInDirection(dt)
         local reductionForce = (directionComp.Dir * -1) * decelSpeed * dt
         local resultForce = reductionForce + moveComp.MoveVelocity.x
 
-        --TODO dot
-        --FVector::DotProduct(resultForce.GetSafeNormal(), mainForce.GetSafeNormal()) < 0.f
-        --if true then set move velocity x to 0 otherwise reduce it by reduction force
-        moveComp.MoveVelocity.x=moveComp.MoveVelocity.x +reductionForce
+        local isPositiveDir = directionComp.Dir>0
+        local isNewvelocityLess=moveComp.MoveVelocity.x+resultForce<0.0
+
+        if (isPositiveDir and isNewvelocityLess) or(not isPositiveDir and  not isNewvelocityLess) then
+            moveComp.MoveVelocity.x=0.0
+        else 
+            moveComp.MoveVelocity.x=moveComp.MoveVelocity.x +reductionForce
+        end
     else
         local step = 100.0 * dt * moveComp.DirectionComp.Dir
         moveComp.MoveVelocity.x = step
