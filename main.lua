@@ -52,5 +52,6 @@ function love.draw()
         else
             love.graphics.print("Jump:" .. "false", 0, 20)
     end
+    love.graphics.print("moveForce: " .. Player.MoveComp.MoveVelocity.x,0,30)
    
 end

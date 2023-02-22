@@ -43,7 +43,10 @@ function ReadInput()
 end
 
 function ApplyMovement()
-    local nextStep = vec2.new(player.Position.x + moveComp.MoveVelocity.x, player.Position.y + moveComp.MoveVelocity.y)
+    local nextStep = vec2.new(
+        player.Position.x + moveComp.MoveVelocity.x,
+        player.Position.y + moveComp.MoveVelocity.y)
+
     if nextStep.y >= WindowSize.y - player.Size.y then
         moveComp.BecomeGrounded()
         nextStep.y = WindowSize.y - player.Size.y

@@ -8,7 +8,8 @@ local moveComp = {
     MoveVelocity = vec2.new(0.0, 0.0),
     DirectionComp = directionComp,
     GravityComp = gravityComp,
-    JumpComp = jumpComp
+    JumpComp = jumpComp,
+    MoveForce = 0.0
 }
 
 local jumpForce = 0.0
@@ -29,9 +30,9 @@ function moveComp.MoveInDirection(dt)
         local resultForce = reductionForce + moveComp.MoveVelocity.x
 
         local isPositiveDir = directionComp.Dir > 0
-        local isNewvelocityLess = moveComp.MoveVelocity.x + resultForce < 0.0
+        local isNewVelocityLess = moveComp.MoveVelocity.x + resultForce < 0.0
 
-        if (isPositiveDir and isNewvelocityLess) or (not isPositiveDir and not isNewvelocityLess) then
+        if (isPositiveDir and isNewVelocityLess) or (not isPositiveDir and not isNewVelocityLess) then
             moveComp.MoveVelocity.x = 0.0
         else
             moveComp.MoveVelocity.x = moveComp.MoveVelocity.x + reductionForce
@@ -42,21 +43,23 @@ function moveComp.MoveInDirection(dt)
         if directionComp.IsRecivingInput then
             newStep = dt * directionComp.Dir * directionComp.AccelerationSpeed
         end
-        
-        local absInput = lMath.clamp( directionComp.Dir ^ 2, 0.0, 1.0)
-        if moveForce+newStep<absInput then
-            moveForce = moveForce + newStep
+
+        local absInput = lMath.clamp(directionComp.Dir ^ 2, 0.0, 1.0)
+        moveForce = moveForce + newStep
+        moveForce = newStep * (math.sqrt(moveForce ^ 2))
+
+        local isRightDir = directionComp.Dir > 0
+        local isVelocityLeft = moveComp.MoveVelocity.x < 0.0
+        if (isRightDir and isVelocityLeft) or (not isRightDir and not isVelocityLeft)then
+            moveComp.MoveVelocity.x = moveComp.MoveVelocity.x *-1
         end
 
 
-        if newStep ^ 2 > 0.0 then
-            moveForce = newStep * (math.sqrt(moveForce^2))
-        end
-
-
-       -- moveForce = lMath.clamp(moveForce, -1.0, 1.0)
-
-        moveComp.MoveVelocity.x = moveComp.MoveVelocity.x + (moveForce * directionComp.MoveSpeed)
+        -- moveForce = lMath.clamp(moveForce, -1.0, 1.0)
+        --moveForce = moveForce + moveForce
+        moveComp.MoveForce = moveForce
+        moveComp.MoveVelocity.x = lMath.clamp( moveComp.MoveVelocity.x + moveForce,-1.0,1.0) * directionComp.MoveSpeed
+        --moveComp.MoveVelocity.x + (moveForce * directionComp.MoveSpeed)
     end
 end
 
