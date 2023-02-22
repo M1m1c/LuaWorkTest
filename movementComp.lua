@@ -27,40 +27,35 @@ function moveComp.MoveInDirection(dt)
         end
 
         local reductionForce = (directionComp.Dir * -1) * decelSpeed * dt
-        local resultForce = reductionForce + moveComp.MoveVelocity.x
+        local resultForce = reductionForce + moveForce
 
         local isPositiveDir = directionComp.Dir > 0
-        local isNewVelocityLess = moveComp.MoveVelocity.x + resultForce < 0.0
+        local isNewVelocityLess = moveForce + resultForce < 0.0
 
         if (isPositiveDir and isNewVelocityLess) or (not isPositiveDir and not isNewVelocityLess) then
-            moveComp.MoveVelocity.x = 0.0
+            moveForce = 0.0
         else
-            moveComp.MoveVelocity.x = moveComp.MoveVelocity.x + reductionForce
+            moveForce = moveForce + reductionForce
         end
     else
-        --TODO implememt gradual increase of speed
         local newStep = 0.0
         if directionComp.IsRecivingInput then
             newStep = dt * directionComp.Dir * directionComp.AccelerationSpeed
         end
 
-        local absInput = lMath.clamp(directionComp.Dir ^ 2, 0.0, 1.0)
         moveForce = moveForce + newStep
-        moveForce = newStep * (math.sqrt(moveForce ^ 2))
 
         local isRightDir = directionComp.Dir > 0
-        local isVelocityLeft = moveComp.MoveVelocity.x < 0.0
+        local isVelocityLeft = moveForce < 0.0
         if (isRightDir and isVelocityLeft) or (not isRightDir and not isVelocityLeft)then
-            moveComp.MoveVelocity.x = moveComp.MoveVelocity.x *-1
+            moveForce = moveForce *-1
         end
 
 
-        -- moveForce = lMath.clamp(moveForce, -1.0, 1.0)
-        --moveForce = moveForce + moveForce
-        moveComp.MoveForce = moveForce
-        moveComp.MoveVelocity.x = lMath.clamp( moveComp.MoveVelocity.x + moveForce,-1.0,1.0) * directionComp.MoveSpeed
-        --moveComp.MoveVelocity.x + (moveForce * directionComp.MoveSpeed)
     end
+    moveForce=lMath.clamp(moveForce,-1.0,1.0)
+    moveComp.MoveForce = moveForce
+    moveComp.MoveVelocity.x = moveForce * directionComp.MoveSpeed
 end
 
 --JUMPING
