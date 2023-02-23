@@ -1,5 +1,6 @@
 local jumpComp = {
-    MaxJumpTimer = 0.4,
+    JumpStrength =200.0,
+    MaxJumpTimer = 0.3,
     JumpTimer = 0.0,
     MaxJumpButtonHoldTimer = 0.15,
     JumpButtonHoldTimer = 0.,

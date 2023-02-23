@@ -72,7 +72,7 @@ end
 
 function moveComp.JumpingAndFalling(positionY, sizeY, dt)
     if jumpComp.JumpTimer > 0.0 then
-        local jumpMagnitude = -gravityComp.Gravity * dt * ((jumpComp.JumpTimer * 4) ^ 2);
+        local jumpMagnitude = -jumpComp.JumpStrength * dt * ((jumpComp.JumpTimer * 4) ^ 2);
 
         jumpForce = jumpMagnitude
 
