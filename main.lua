@@ -2,6 +2,8 @@ local Vec2 = require("vec2")
 local Player = require("player")
 local Lmath = require("lmath")
 
+local fixedDT = 0.02
+local accumulatedFixedTime = 0
 
 WindowSize = Vec2.new(800.0, 600.0)
 
@@ -12,9 +14,17 @@ function love.load()
 end
 
 function love.update(dt)
-    Player.Update(dt)
+   FixedUpdate(dt)
 end
 
+function FixedUpdate(dt)
+    accumulatedFixedTime = accumulatedFixedTime + dt
+  
+    while accumulatedFixedTime >= fixedDT do
+      Player.Update(fixedDT)
+      accumulatedFixedTime = accumulatedFixedTime - fixedDT
+    end
+end
 
 function love.keypressed(key)
     if key == "space" then
