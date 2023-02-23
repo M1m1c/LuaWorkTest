@@ -58,12 +58,11 @@ end
 
 --JUMPING
 function moveComp.ExtendJumpWithHeldButton(jumpInput, dt)
-   
     if jumpInput == false then
         return
     elseif jumpComp.JumpButtonHoldTimer >= jumpComp.MaxJumpButtonHoldTimer then
         return
-    else
+    elseif jumpComp.AllowExtending then
         local temp = jumpComp.JumpButtonHoldTimer + (dt * 0.7)
         jumpComp.JumpButtonHoldTimer = lMath.clamp(temp, 0.0, jumpComp.MaxJumpButtonHoldTimer)
         jumpComp.JumpTimer = jumpComp.JumpTimer + ((dt + jumpComp.JumpButtonHoldTimer) * 0.2);
@@ -72,7 +71,6 @@ function moveComp.ExtendJumpWithHeldButton(jumpInput, dt)
 end
 
 function moveComp.JumpingAndFalling(positionY, sizeY, dt)
-
     if jumpComp.JumpTimer > 0.0 then
         local jumpMagnitude = -gravityComp.Gravity * dt * ((jumpComp.JumpTimer * 4) ^ 2);
 
@@ -96,6 +94,7 @@ function moveComp.InitiateJump()
     if jumpComp.CurrentJumps == jumpComp.MaxJumps then
         return
     end
+    jumpComp.AllowExtending = true
     jumpComp.JumpTimer = jumpComp.MaxJumpTimer
     jumpComp.JumpButtonHoldTimer = 0.0
     jumpComp.CurrentJumps = jumpComp.CurrentJumps + 1
@@ -103,6 +102,10 @@ function moveComp.InitiateJump()
     gravityComp.IsGrounded = false
     gravForce = 0.0
     jumpForce = 0.0
+end
+
+function moveComp.DeInitiateJump()
+    jumpComp.AllowExtending = false
 end
 
 function moveComp.BecomeGrounded()

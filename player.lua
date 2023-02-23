@@ -23,10 +23,10 @@ function ReadInput()
 
     if input.Jump.Current == true and input.Jump.Old == false then
         input.Jump.Old = true
-
         moveComp.InitiateJump()
     elseif input.Jump.Current == false and input.Jump.Old == true then
         input.Jump.Old = false
+        moveComp.DeInitiateJump()
     end
 
     if input.Right.Current == true then
