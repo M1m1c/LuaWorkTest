@@ -1,4 +1,10 @@
 
+
+ComponentTypes=
+{
+  Position="position"
+}
+
 local components = {}
 function AddComponent(entityId, componentType, componentData)
   
