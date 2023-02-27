@@ -1,63 +1,58 @@
 local vec2 = require("vec2")
 local inputComp = require("inputComp")
-local moveComp = require("movementComp")
+local playerMoveSystem = require("playerMovementSystems")
+local componentM = require("componentManager")
+local entityM = require("entityManager")
+local systems = require("systems")
+
+local entityID = 0
 
 local player = {
     Position = vec2.new(0, 0),
     Size = vec2.new(0, 0),
     Input = inputComp,
-    MoveComp = moveComp
+    MoveComp = playerMoveSystem
 }
 
-function player.Update(dt)
-    ReadInput()
-    moveComp.ExtendJumpWithHeldButton(inputComp.Jump.Current, dt)
-    moveComp.JumpingAndFalling(player.Position.y, player.Size.y, dt)
-    moveComp.MoveInDirection(dt)
-    ApplyMovement()
+function PlayerLoad(playerEntity)
+    entityID = playerEntity
+    AddComponent(playerEntity, ComponentTypes.Position, vec2.new(390, 0))
+    AddComponent(playerEntity, ComponentTypes.Size, vec2.new(10, 10))
+    AddComponent(playerEntity, ComponentTypes.Input, inputComp)
+    AddComponent(playerEntity, ComponentTypes.Velocity, vec2.new(0, 0))
+end
+
+function PlayerUpdate(dt)
+    local input = GetComponent(entityID, ComponentTypes.Input)
+
+    ReadInput(input)
+    playerMoveSystem.ExtendJumpWithHeldButton(inputComp.Jump.Current, dt)
+    playerMoveSystem.JumpingAndFalling(player.Position.y, player.Size.y, dt)
+    playerMoveSystem.MoveInDirection(dt)
+    ApplyMovement(entityID)
 end
 
 --TODO breakout funcitonality where we can pass a inputatom and two collections of funcitons, one to call when button is pressed and one when button is released
-function ReadInput()
-    local input = player.Input
-
+function ReadInput(input)
     if input.Jump.Current == true and input.Jump.Old == false then
         input.Jump.Old = true
-        moveComp.InitiateJump()
+        playerMoveSystem.InitiateJump()
     elseif input.Jump.Current == false and input.Jump.Old == true then
         input.Jump.Old = false
-        moveComp.DeInitiateJump()
+        playerMoveSystem.DeInitiateJump()
     end
 
     if input.Right.Current == true then
-        moveComp.DirectionComp.Dir = 1
+        playerMoveSystem.DirectionComp.Dir = 1
     elseif input.Left.Current == true then
-        moveComp.DirectionComp.Dir = -1
+        playerMoveSystem.DirectionComp.Dir = -1
     end
 
     if input.Right.Current == false and input.Left.Current == false then
-        moveComp.DirectionComp.IsRecivingInput = false
+        playerMoveSystem.DirectionComp.IsRecivingInput = false
     else
-        moveComp.DirectionComp.IsRecivingInput = true
+        playerMoveSystem.DirectionComp.IsRecivingInput = true
     end
-end
-
-function ApplyMovement()
-    local nextStep = vec2.new(
-        player.Position.x + moveComp.MoveVelocity.x,
-        player.Position.y + moveComp.MoveVelocity.y)
-
-    if nextStep.y >= WindowSize.y - player.Size.y then
-        moveComp.BecomeGrounded()
-        nextStep.y = WindowSize.y - player.Size.y
-    end
-
-    if nextStep.x >= WindowSize.x - player.Size.x then
-        nextStep.x = WindowSize.x - player.Size.x
-    elseif nextStep.x <= 0 then
-        nextStep.x = 0
-    end
-    player.Position = nextStep
 end
 
 return player

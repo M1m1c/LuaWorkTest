@@ -4,7 +4,7 @@ local gravityComp = require("gravityComp")
 local jumpComp = require("jumpComp")
 local directionComp = require("directionComp")
 
-local moveComp = {
+local playerMoveSystem = {
     MoveVelocity = vec2.new(0.0, 0.0),
     DirectionComp = directionComp,
     GravityComp = gravityComp,
@@ -17,7 +17,7 @@ local gravForce = 0.0
 local moveForce = 0.0
 
 --HORIZONTAL MOVEMENT
-function moveComp.MoveInDirection(dt)
+function playerMoveSystem.MoveInDirection(dt)
     if directionComp.IsRecivingInput == false then
         local decelSpeed = 0
         if gravityComp.IsGrounded == true then
@@ -52,12 +52,12 @@ function moveComp.MoveInDirection(dt)
         end
     end
     moveForce = lMath.clamp(moveForce, -1.0, 1.0)
-    moveComp.MoveForce = moveForce
-    moveComp.MoveVelocity.x = moveForce * directionComp.MaxMoveSpeed
+    playerMoveSystem.MoveForce = moveForce
+    playerMoveSystem.MoveVelocity.x = moveForce * directionComp.MaxMoveSpeed
 end
 
 --JUMPING
-function moveComp.ExtendJumpWithHeldButton(jumpInput, dt)
+function playerMoveSystem.ExtendJumpWithHeldButton(jumpInput, dt)
     if jumpInput == false then
         return
     elseif jumpComp.JumpButtonHoldTimer >= jumpComp.MaxJumpButtonHoldTimer then
@@ -66,11 +66,11 @@ function moveComp.ExtendJumpWithHeldButton(jumpInput, dt)
         local temp = jumpComp.JumpButtonHoldTimer + (dt * 0.7)
         jumpComp.JumpButtonHoldTimer = lMath.clamp(temp, 0.0, jumpComp.MaxJumpButtonHoldTimer)
         jumpComp.JumpTimer = jumpComp.JumpTimer + ((dt + jumpComp.JumpButtonHoldTimer) * 0.2);
-        moveComp.JumpComp = jumpComp
+        playerMoveSystem.JumpComp = jumpComp
     end
 end
 
-function moveComp.JumpingAndFalling(positionY, sizeY, dt)
+function playerMoveSystem.JumpingAndFalling(positionY, sizeY, dt)
     if jumpComp.JumpTimer > 0.0 then
         local jumpMagnitude = -jumpComp.JumpStrength * dt * ((jumpComp.JumpTimer * 4) ^ 2);
 
@@ -86,11 +86,11 @@ function moveComp.JumpingAndFalling(positionY, sizeY, dt)
         jumpForce = 0.0
     end
 
-    moveComp.MoveVelocity.y = jumpForce + gravForce
-    moveComp.GravityComp = gravityComp
+    playerMoveSystem.MoveVelocity.y = jumpForce + gravForce
+    playerMoveSystem.GravityComp = gravityComp
 end
 
-function moveComp.InitiateJump()
+function playerMoveSystem.InitiateJump()
     if jumpComp.CurrentJumps == jumpComp.MaxJumps then
         return
     end
@@ -104,16 +104,16 @@ function moveComp.InitiateJump()
     jumpForce = 0.0
 end
 
-function moveComp.DeInitiateJump()
+function playerMoveSystem.DeInitiateJump()
     jumpComp.AllowExtending = false
 end
 
-function moveComp.BecomeGrounded()
-    moveComp.MoveVelocity.y = 0
+function playerMoveSystem.BecomeGrounded()
+    playerMoveSystem.MoveVelocity.y = 0
     jumpComp.JumpTimer = 0
     jumpComp.CurrentJumps = 0
     gravityComp.FallMomentum = 0
     gravityComp.IsGrounded = true
 end
 
-return moveComp
+return playerMoveSystem
