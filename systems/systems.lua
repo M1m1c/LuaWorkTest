@@ -1,6 +1,6 @@
-local vec2 = require("vec2")
-local componentM = require("componentManager")
-local entityM = require("entityManager")
+local vec2 = require("../vec2")
+local componentM = require("../componentManager")
+local entityM = require("../entityManager")
 
 
 

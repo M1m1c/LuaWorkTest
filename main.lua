@@ -1,8 +1,8 @@
 local Vec2 = require("vec2")
 local entityM = require("entityManager")
-local Player = require("playerSystems")
 local Lmath = require("lmath")
-local systems = require("systems")
+local playerSystems = require("systems/playerSystems")
+local systems = require("systems/systems")
 
 local fixedDT = 0.02
 local accumulatedFixedTime = 0
