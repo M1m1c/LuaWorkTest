@@ -22,13 +22,12 @@ function FixedUpdate(dt)
     accumulatedFixedTime = accumulatedFixedTime + dt
 
     while accumulatedFixedTime >= fixedDT do
-        
         for entityID in IterateEntitiesWithComponents({ ComponentTypes.Input, ComponentTypes.Direction }) do
             ReadInput(entityID)
         end
 
         PlayerUpdate(fixedDT)
-        
+
         for entityID in IterateEntitiesWithComponents({ ComponentTypes.Position, ComponentTypes.Size, ComponentTypes.Velocity }) do
             ApplyMovement(entityID)
         end
@@ -37,8 +36,7 @@ function FixedUpdate(dt)
 end
 
 function love.keypressed(key)
-
-    local playerInput= GetComponent(playerEntity,ComponentTypes.Input)
+    local playerInput = GetComponent(playerEntity, ComponentTypes.Input)
     if key == "space" then
         playerInput.Jump.Current = true
     end
@@ -53,8 +51,7 @@ function love.keypressed(key)
 end
 
 function love.keyreleased(key)
-    
-    local playerInput= GetComponent(playerEntity,ComponentTypes.Input)
+    local playerInput = GetComponent(playerEntity, ComponentTypes.Input)
     if key == "space" then
         playerInput.Jump.Current = false
     end
