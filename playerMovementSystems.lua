@@ -1,6 +1,5 @@
 local vec2 = require("vec2")
 local lMath = require("lmath")
-local playerMoveComp = require("playerMoveComp")
 
 local jumpForce = 0.0
 local gravForce = 0.0
