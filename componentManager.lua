@@ -6,7 +6,11 @@ ComponentTypes=
   Size="size",
   Input="input",
   Velocity="Velocity",
-  MoveComp="moveComp",
+  Player="player",
+  MoveForce="moveForce",
+  Direction="Direction",
+  Jump="Jump",
+  Gravity="Gravity",
 }
 
 local components = {}

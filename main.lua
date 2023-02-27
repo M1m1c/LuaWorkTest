@@ -11,10 +11,6 @@ local playerEntity = 0
 function love.load()
     playerEntity = CreateEntity()
     PlayerLoad(playerEntity)
-
-    Player.Position = Vec2.new(390, 0)
-    Player.Size = Vec2.new(10, 10)
-    Player.MoveComp.GravityComp.Weight = 5.5
 end
 
 function love.update(dt)
@@ -25,7 +21,16 @@ function FixedUpdate(dt)
     accumulatedFixedTime = accumulatedFixedTime + dt
 
     while accumulatedFixedTime >= fixedDT do
+        
+        for entityId in IterateEntitiesWithComponents({ ComponentTypes.Input, ComponentTypes.Direction }) do
+            ReadInput(entityId)
+        end
+        
         PlayerUpdate(fixedDT)
+        
+        for entityId in IterateEntitiesWithComponents({ ComponentTypes.Position, ComponentTypes.Size, ComponentTypes.Velocity }) do
+            ApplyMovement(entityId)
+        end
         accumulatedFixedTime = accumulatedFixedTime - fixedDT
     end
 end
@@ -67,14 +72,13 @@ function love.draw()
         local size = GetComponent(entityId, ComponentTypes.Size)
 
         love.graphics.rectangle("fill", position.x, position.y, size.x, size.y)
-        
     end
-    
+
     love.graphics.print("player position Y:" .. Player.Position.y, 0, 10)
     if Player.Input.Jump.Current == true then
         love.graphics.print("Jump:" .. "true", 0, 20)
     else
         love.graphics.print("Jump:" .. "false", 0, 20)
     end
-    love.graphics.print("moveForce: " .. Player.MoveComp.MoveForce, 0, 30)
+    --love.graphics.print("moveForce: " .. Player.MoveComp.MoveForce, 0, 30)
 end
