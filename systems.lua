@@ -3,6 +3,7 @@ local componentM = require("componentManager")
 local entityM = require("entityManager")
 
 
+
 function ReadInput(entityID)
     local input = GetComponent(entityID, ComponentTypes.Input)
     local direction = GetComponent(entityID, ComponentTypes.Direction)
@@ -16,7 +17,7 @@ function ReadInput(entityID)
         end
     elseif input.Jump.Current == false and input.Jump.Old == true then
         input.Jump.Old = false
-        
+
         local player = GetComponent(entityID, ComponentTypes.Player)
         if player ~= nil then
             PlayerDeInitiateJump()

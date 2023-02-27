@@ -1,22 +1,12 @@
 local vec2 = require("vec2")
 local inputComp = require("inputComp")
-local playerMoveSystem = require("playerMovementSystems")
 local directionComp = require("directionComp")
 local jumpComp = require("jumpComp")
 local gravityComp = require("gravityComp")
 local forceComp = require("forceComp")
-local componentM = require("componentManager")
-local entityM = require("entityManager")
-local systems = require("systems")
+local playerMoveSystem = require("playerMovementSystems")
 
 local entityID = 0
-
-local player = {
-    Position = vec2.new(0, 0),
-    Size = vec2.new(0, 0),
-    Input = inputComp,
-    MoveComp = playerMoveSystem
-}
 
 function PlayerLoad(playerEntity)
     entityID = playerEntity
@@ -45,4 +35,3 @@ function PlayerUpdate(dt)
    
 end
 
-return player

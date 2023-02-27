@@ -2,6 +2,7 @@ local Vec2 = require("vec2")
 local entityM = require("entityManager")
 local Player = require("player")
 local Lmath = require("lmath")
+local systems = require("systems")
 
 local fixedDT = 0.02
 local accumulatedFixedTime = 0
@@ -22,44 +23,48 @@ function FixedUpdate(dt)
 
     while accumulatedFixedTime >= fixedDT do
         
-        for entityId in IterateEntitiesWithComponents({ ComponentTypes.Input, ComponentTypes.Direction }) do
-            ReadInput(entityId)
+        for entityID in IterateEntitiesWithComponents({ ComponentTypes.Input, ComponentTypes.Direction }) do
+            ReadInput(entityID)
         end
 
         PlayerUpdate(fixedDT)
         
-        for entityId in IterateEntitiesWithComponents({ ComponentTypes.Position, ComponentTypes.Size, ComponentTypes.Velocity }) do
-            ApplyMovement(entityId)
+        for entityID in IterateEntitiesWithComponents({ ComponentTypes.Position, ComponentTypes.Size, ComponentTypes.Velocity }) do
+            ApplyMovement(entityID)
         end
         accumulatedFixedTime = accumulatedFixedTime - fixedDT
     end
 end
 
 function love.keypressed(key)
+
+    local playerInput= GetComponent(playerEntity,ComponentTypes.Input)
     if key == "space" then
-        Player.Input.Jump.Current = true
+        playerInput.Jump.Current = true
     end
 
     if key == "d" or key == "right" then
-        Player.Input.Right.Current = true
+        playerInput.Right.Current = true
     end
 
     if key == "a" or key == "left" then
-        Player.Input.Left.Current = true
+        playerInput.Left.Current = true
     end
 end
 
 function love.keyreleased(key)
+    
+    local playerInput= GetComponent(playerEntity,ComponentTypes.Input)
     if key == "space" then
-        Player.Input.Jump.Current = false
+        playerInput.Jump.Current = false
     end
 
     if key == "d" or key == "right" then
-        Player.Input.Right.Current = false
+        playerInput.Right.Current = false
     end
 
     if key == "a" or key == "left" then
-        Player.Input.Left.Current = false
+        playerInput.Left.Current = false
     end
 end
 
@@ -74,8 +79,8 @@ function love.draw()
         love.graphics.rectangle("fill", position.x, position.y, size.x, size.y)
     end
 
-    love.graphics.print("player position Y:" .. Player.Position.y, 0, 10)
-    if Player.Input.Jump.Current == true then
+    love.graphics.print("player position Y:" .. GetComponent(playerEntity, ComponentTypes.Position).y, 0, 10)
+    if GetComponent(playerEntity, ComponentTypes.Input).Jump.Current == true then
         love.graphics.print("Jump:" .. "true", 0, 20)
     else
         love.graphics.print("Jump:" .. "false", 0, 20)
