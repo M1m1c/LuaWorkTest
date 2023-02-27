@@ -80,5 +80,4 @@ function love.draw()
     else
         love.graphics.print("Jump:" .. "false", 0, 20)
     end
-    love.graphics.print("moveForce: " .. GetComponent(playerEntity, ComponentTypes.MoveForce), 0, 30)
 end

@@ -1,14 +1,12 @@
 local vec2 = require("vec2")
 local lMath = require("lmath")
 
-local jumpForce = 0.0
-local gravForce = 0.0
-local moveForce = 0.0
 local playerEntity = 0
 local velocity
 local directionComp 
 local gravityComp 
 local jumpComp
+local force
 
 function LoadPlayerMoveSystem(entityId)
     playerEntity = entityId
@@ -16,6 +14,7 @@ function LoadPlayerMoveSystem(entityId)
     directionComp = GetComponent(playerEntity, ComponentTypes.Direction)
     gravityComp = GetComponent(playerEntity, ComponentTypes.Gravity)
     jumpComp = GetComponent(playerEntity,ComponentTypes.Jump)
+    force = GetComponent(playerEntity,ComponentTypes.Force)
 end
 
 --HORIZONTAL MOVEMENT
@@ -31,15 +30,15 @@ function PlayerMoveInDirection(dt)
         end
 
         local reductionForce = (directionComp.Dir * -1) * decelSpeed * dt
-        local resultForce = reductionForce + moveForce
+        local resultForce = reductionForce + force.MoveForce
 
         local isPositiveDir = directionComp.Dir > 0
-        local isNewVelocityLess = moveForce + resultForce < 0.0
+        local isNewVelocityLess = force.MoveForce + resultForce < 0.0
 
         if (isPositiveDir and isNewVelocityLess) or (not isPositiveDir and not isNewVelocityLess) then
-            moveForce = 0.0
+            force.MoveForce = 0.0
         else
-            moveForce = moveForce + reductionForce
+            force.MoveForce = force.MoveForce + reductionForce
         end
     else
         local newStep = 0.0
@@ -47,17 +46,16 @@ function PlayerMoveInDirection(dt)
             newStep = dt * directionComp.Dir * directionComp.AccelerationSpeed
         end
 
-        moveForce = moveForce + newStep
+        force.MoveForce = force.MoveForce + newStep
 
         local isRightDir = directionComp.Dir > 0
-        local isVelocityLeft = moveForce < 0.0
+        local isVelocityLeft = force.MoveForce < 0.0
         if (isRightDir and isVelocityLeft) or (not isRightDir and not isVelocityLeft) then
-            moveForce = moveForce * -1
+            force.MoveForce = force.MoveForce * -1
         end
     end
-    moveForce = lMath.clamp(moveForce, -1.0, 1.0)
-    SetComponent(playerEntity,ComponentTypes.MoveForce,moveForce)
-    velocity.x = GetComponent(playerEntity,ComponentTypes.MoveForce) * directionComp.MaxMoveSpeed
+    force.MoveForce = lMath.clamp(force.MoveForce, -1.0, 1.0)
+    velocity.x = force.MoveForce * directionComp.MaxMoveSpeed
 end
 
 --JUMPING
@@ -80,19 +78,20 @@ function PlayerJumpingAndFalling(positionY, sizeY, dt)
     if jumpComp.JumpTimer > 0.0 then
         local jumpMagnitude = -jumpComp.JumpStrength * dt * ((jumpComp.JumpTimer * 4) ^ 2);
 
-        jumpForce = jumpMagnitude
+        
+        force.JumpForce = jumpMagnitude
 
         jumpComp.JumpTimer = lMath.clamp(jumpComp.JumpTimer - dt, 0.0, jumpComp.MaxJumpTimer) --clamp this between 0 and max
     elseif gravityComp.IsGrounded == false then
         gravityComp.FallMomentum = gravityComp.FallMomentum + (dt * gravityComp.Weight)
         local gravityStep = gravityComp.Gravity * gravityComp.FallMomentum * dt
-        gravForce = gravityStep
+        force.GravForce = gravityStep
     else
-        gravForce = 0.0
-        jumpForce = 0.0
+        force.GravForce = 0.0
+        force.JumpForce = 0.0
     end
 
-    velocity.y = jumpForce + gravForce
+    velocity.y = force.JumpForce + force.GravForce
 end
 
 function PlayerInitiateJump()
@@ -106,8 +105,8 @@ function PlayerInitiateJump()
     jumpComp.CurrentJumps = jumpComp.CurrentJumps + 1
     gravityComp.FallMomentum = 0
     gravityComp.IsGrounded = false
-    gravForce = 0.0
-    jumpForce = 0.0
+    force.GravForce = 0.0
+    force.JumpForce = 0.0
 end
 
 function PlayerDeInitiateJump()
