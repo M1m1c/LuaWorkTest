@@ -1,6 +1,6 @@
 local Vec2 = require("vec2")
 local entityM = require("entityManager")
-local Player = require("player")
+local Player = require("playerSystems")
 local Lmath = require("lmath")
 local systems = require("systems")
 

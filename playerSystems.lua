@@ -1,9 +1,9 @@
 local vec2 = require("vec2")
-local inputComp = require("inputComp")
-local directionComp = require("directionComp")
-local jumpComp = require("jumpComp")
-local gravityComp = require("gravityComp")
-local forceComp = require("forceComp")
+local inputComp = require("components/inputComp")
+local directionComp = require("components/directionComp")
+local jumpComp = require("components/jumpComp")
+local gravityComp = require("components/gravityComp")
+local forceComp = require("components/forceComp")
 local playerMoveSystem = require("playerMovementSystems")
 
 local entityID = 0
