@@ -9,7 +9,6 @@ local velocity
 local directionComp 
 local gravityComp 
 local jumpComp
-local MoveForceComp
 
 function LoadPlayerMoveSystem(entityId)
     playerEntity = entityId
@@ -17,7 +16,6 @@ function LoadPlayerMoveSystem(entityId)
     directionComp = GetComponent(playerEntity, ComponentTypes.Direction)
     gravityComp = GetComponent(playerEntity, ComponentTypes.Gravity)
     jumpComp = GetComponent(playerEntity,ComponentTypes.Jump)
-    MoveForceComp = GetComponent(playerEntity,ComponentTypes.MoveForce)
 end
 
 --HORIZONTAL MOVEMENT
@@ -58,8 +56,8 @@ function PlayerMoveInDirection(dt)
         end
     end
     moveForce = lMath.clamp(moveForce, -1.0, 1.0)
-    MoveForceComp = moveForce
-    velocity.x = moveForce * directionComp.MaxMoveSpeed
+    SetComponent(playerEntity,ComponentTypes.MoveForce,moveForce)
+    velocity.x = GetComponent(playerEntity,ComponentTypes.MoveForce) * directionComp.MaxMoveSpeed
 end
 
 --JUMPING

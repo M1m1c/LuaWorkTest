@@ -25,7 +25,7 @@ function FixedUpdate(dt)
         for entityId in IterateEntitiesWithComponents({ ComponentTypes.Input, ComponentTypes.Direction }) do
             ReadInput(entityId)
         end
-        
+
         PlayerUpdate(fixedDT)
         
         for entityId in IterateEntitiesWithComponents({ ComponentTypes.Position, ComponentTypes.Size, ComponentTypes.Velocity }) do
@@ -80,5 +80,5 @@ function love.draw()
     else
         love.graphics.print("Jump:" .. "false", 0, 20)
     end
-    --love.graphics.print("moveForce: " .. Player.MoveComp.MoveForce, 0, 30)
+    love.graphics.print("moveForce: " .. GetComponent(playerEntity, ComponentTypes.MoveForce), 0, 30)
 end
